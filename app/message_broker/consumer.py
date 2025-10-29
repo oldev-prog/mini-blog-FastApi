@@ -54,6 +54,32 @@ async def consumer_main():
 
     return {'msg': 'the notification was sent successfully'}
 
+async def consumer_login():
+    connection = await async_connection()
+    async with connection:
+        channel = await connection.channel()
+
+        exchange = await channel.declare_exchange(
+            name='mini_blog_login',
+            type='direct',
+            durable=True
+        )
+
+        queue_name = 'ver_codes'
+
+        queue = await channel.declare_queue(name=queue_name, durable=True)
+
+        await queue.bind(exchange, routing_key=queue_name)
+
+        await queue.consume(callback)
+
+        print(f"👂 Listening on queue: {queue_name}")
+
+        await asyncio.Future()
+
+
+    return {'msg': 'the notification was sent successfully'}
+
 if __name__ == '__main__':
     asyncio.run(consumer_main())
 

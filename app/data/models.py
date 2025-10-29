@@ -6,13 +6,16 @@ from datetime import datetime
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
 created_at = Annotated[datetime, mapped_column(server_default=text("TIMEZONE('utc', now())"))]
+
 class User(Base):
     __tablename__ = 'users'
 
     id: Mapped[intpk]
     username: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
-    hashed_password: Mapped[str]
+    password: Mapped[str]
+    is_verified: Mapped[bool] = mapped_column(default=False)
+    is_firstlog: Mapped[bool] = mapped_column(default=True)
 
     posts: Mapped[List['Post']] = relationship(back_populates='author')
     comments: Mapped[List['Comment']] = relationship(back_populates='author')

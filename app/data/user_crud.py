@@ -7,6 +7,7 @@ from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 from app.schemas.user_schema import UserPOSTDTO, UserGETDTO
 from typing import List
+from app.utils.auth_utils import get_password_hash
 
 new_session = async_session_factory
 
@@ -29,7 +30,9 @@ async def create_user(user: UserPOSTDTO, db: AsyncSession) -> User:
     new_user = User(
         username = user.username,
         email = user.email,
-        hashed_password = user.hashed_password
+        hashed_password = get_password_hash(user.password),
+        is_verified=False,
+        is_firstlog=True
     )
     db.add(new_user)
     await db.commit()
